@@ -1,0 +1,8 @@
+*{
+    font-weight: 600;
+    font-family: 'Quicksand';
+}
+#addAccount{
+    text-decoration: underline;
+    color: #3f19d3;
+}
