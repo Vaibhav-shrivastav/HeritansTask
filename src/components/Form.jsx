@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { AiOutlineDown, AiOutlineRight } from "react-icons/ai";
+import {
+  AiOutlineDown,
+  AiOutlineRight,
+  AiOutlineCheckCircle,
+} from "react-icons/ai";
 import { PiNumberCircleOneLight, PiNumberCircleTwoLight } from "react-icons/pi";
 import { BsCheckCircle, BsCheckCircleFill } from "react-icons/bs";
 
@@ -15,6 +19,27 @@ function Form() {
   const [accountCount, setAccountCount] = useState([]);
   const [backgroundColor, setBackgroundColor] = useState(null);
   const [modalTarget, setModalTarget] = useState("");
+
+  // Username
+  const [usernameClass, setUsernameClass] = useState(
+    "form-control border-secondary"
+  );
+  const [usernameValidate, setUsernameValidate] = useState(null);
+  const [usernameValidateClass, setUsernameValidateClass] =
+    useState("text-danger");
+  const [usernameCheck, setUsernameCheck] = useState(null);
+
+  // FullName 
+  const [fullnameClass, setfullNameClass] = useState("form-control border-secondary");
+  const [fullnameValidate, setfullNameValidate] = useState(null);
+  const [fullnameValidateClass, setfullNameValidateClass] = useState("text-danger");
+  const [fullnameCheck, setfullNameCheck] = useState(null);
+
+  // Email
+  const [emailClass, setEmailClass] = useState("form-control border-secondary");
+  const [emailValidate, setEmailValidate] = useState(null);
+  const [emailValidateClass, setEmailValidateClass] = useState("text-danger");
+  const [emailCheck, setEmailCheck] = useState(null);
 
   const ModifyAppearGeneral = () => {
     if (appearGeneral == true) {
@@ -38,19 +63,65 @@ function Form() {
   };
 
   const handleUsername = (e) => {
-    setUsername(e.target.value);
-    console.log(username);
+    const newUsername = e.target.value;
+    setUsername(newUsername);
+
+    const alphabetCount = newUsername.replace(/[^a-zA-Z]/g, "").length;
+    const numberCount = newUsername.replace(/[^0-9]/g, "").length;
+
+    if (alphabetCount >= 4 && numberCount >= 2) {
+      setUsernameClass("form-control border-dark");
+      setUsernameValidate(null);
+      setUsernameCheck(<AiOutlineCheckCircle color="green" />);
+    } else {
+      setUsernameClass("form-control border-danger border-2");
+      setUsernameValidate(
+        "*Enter atleast 4 alphabets and 2 numerical characters"
+      );
+      setUsernameCheck(null);
+    }
+
+    console.log(newUsername);
   };
   const handleFullName = (e) => {
-    setFullName(e.target.value);
+    const fullNameCount = e.target.value
+    if(fullNameCount.length >=3){
+      setFullName(e.target.value)
+      setfullNameClass("form-control border-dark");
+      setfullNameValidate(null);
+      setfullNameCheck(<AiOutlineCheckCircle color="green" />);
+    }else{
+      setfullNameClass("form-control border-danger border-2");
+      setfullNameValidate("*Enter valid name(should match government id)");
+      setfullNameCheck(null);
+    }
   };
 
   const handleEmail = (e) => {
-    setEmail(e.target.value);
+    const email = e.target.value;
+
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+
+    if (emailRegex.test(email)) {
+      setEmailClass("form-control border-dark");
+      setEmailValidate(null);
+      setEmailCheck(<AiOutlineCheckCircle color="green" />);
+      setEmail(email);
+    } else {
+      setEmailClass("form-control border-danger border-2");
+      setEmailValidate("*Enter valid email-id");
+      setEmailCheck(null);
+    }
   };
 
   const handleGeneralDetails = () => {
-    if (username !== null && fullName !== null && email !== null) {
+    if (
+      username !== null &&
+      fullName !== null &&
+      email !== null &&
+      usernameValidate === null &&
+      emailValidate === null && fullnameValidate === null
+    ) {
       console.log("done");
       setAppearGeneral(false);
       setAppearCompany(true);
@@ -59,7 +130,19 @@ function Form() {
       setIconNumberGeneral(true);
       setModalTarget("#exampleModal");
     } else {
-      console.log("noii");
+        if(usernameValidate != null){
+          setUsernameClass("form-control border-danger border-2");
+          setUsernameCheck(null);
+          setUsernameValidate("*Enter atleast 4 alphabets and 2 numerical characters from else")
+        }else if(fullnameValidate != null){
+          setfullNameClass("form-control border-danger border-2");
+          setfullNameValidate("Enter valid name")
+          setfullNameCheck(null);
+        }else if(emailValidate != null){
+          setEmailClass("form-control border-danger border-2");
+          setEmailValidate("Enter valid email-id")
+          setEmailCheck(null);
+        }
     }
   };
   const handleAddAccount = () => {
@@ -157,32 +240,56 @@ function Form() {
 
             {appearGeneral == false ? null : (
               <div className="m-3">
-                <label htmlFor="">Username</label>
+                <label htmlFor="">Username {usernameCheck}</label>
                 <br />
                 <input
                   type="text"
-                  className="form-control border-secondary"
+                  className={usernameClass}
                   style={{ maxWidth: 340 }}
                   onChange={handleUsername}
                 />
+                {
+                  <span
+                    className={usernameValidateClass}
+                    style={{ fontSize: "12px" }}
+                  >
+                    {usernameValidate}
+                  </span>
+                }
                 <br />
-                <label htmlFor="">Full Name</label>
+                <label htmlFor="">Full Name {fullnameCheck}</label>
                 <br />
                 <input
                   type="text"
-                  className="form-control border-secondary"
+                  className={fullnameClass}
                   style={{ maxWidth: 340 }}
                   onChange={handleFullName}
                 />
+                {
+                  <span
+                    className={fullnameValidateClass}
+                    style={{ fontSize: "12px" }}
+                  >
+                    {fullnameValidate}
+                  </span>
+                }
                 <br />
-                <label htmlFor="">Email</label>
+                <label htmlFor="">Email {emailCheck}</label>
                 <br />
                 <input
                   type="email"
-                  className="form-control border-secondary"
+                  className={emailClass}
                   style={{ maxWidth: 340 }}
                   onChange={handleEmail}
                 />{" "}
+                {
+                  <span
+                    className={emailValidateClass}
+                    style={{ fontSize: "12px" }}
+                  >
+                    {emailValidate}
+                  </span>
+                }
                 <br />
                 <div className="text-end">
                   <button
